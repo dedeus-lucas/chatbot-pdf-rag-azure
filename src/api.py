@@ -5,26 +5,27 @@ from src.chatbot import ask
 
 
 app = FastAPI(
-    title="Chatbot PDF RAG Azure",
-    version="1.0"
+    title="PDF RAG Chatbot API",
+    version="1.0.0"
 )
 
 
-class Question(BaseModel):
+class QuestionRequest(BaseModel):
     question: str
+
+
+class AnswerResponse(BaseModel):
+    answer: str
 
 
 @app.get("/")
 def root():
-    return {"status": "online"}
+    return {"status": "API running"}
 
 
-@app.post("/ask")
-def ask_question(data: Question):
+@app.post("/ask", response_model=AnswerResponse)
+def ask_question(request: QuestionRequest):
 
-    answer = ask(data.question)
+    answer = ask(request.question)
 
-    return {
-        "question": data.question,
-        "answer": answer
-    }
+    return AnswerResponse(answer=answer)
