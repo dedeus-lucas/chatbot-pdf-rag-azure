@@ -1,15 +1,58 @@
+# =========================
 # Python
+# =========================
 __pycache__/
-*.pyc
+*.py[cod]
 *.pyo
 *.pyd
-*.env
-venv/
+*.so
 
-# Outputs e Notebooks
+# Virtual environments
+venv/
+.env/
+.venv/
+
+# Environment variables (NUNCA subir)
+.env
+
+# =========================
+# Outputs gerados
+# =========================
 outputs/
+*.faiss
+*.pkl
+
+# =========================
+# Notebooks
+# =========================
 .ipynb_checkpoints/
 
-# Sistema
+# =========================
+# IDE / Editor
+# =========================
+.vscode/
+.idea/
+
+# =========================
+# Sistema Operacional
+# =========================
 .DS_Store
 Thumbs.db
+
+# =========================
+# Logs
+# =========================
+*.log
+
+# =========================
+# Test / cache
+# =========================
+.pytest_cache/
+.cache/
+
+# =========================
+# Build / distribuição
+# =========================
+dist/
+build/
+*.egg-info/
