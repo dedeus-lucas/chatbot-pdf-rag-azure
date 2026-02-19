@@ -1,13 +1,17 @@
-# src/vector_store.py
-
 import os
 import pickle
 import numpy as np
 import faiss
 
+from dotenv import load_dotenv
+from openai import OpenAI
+
 from text_chunker import chunk_documents
 from pdf_loader import load_all_pdfs
-from openai import OpenAI
+
+
+# carregar variáveis do .env
+load_dotenv()
 
 
 # Diretórios
@@ -17,20 +21,23 @@ OUTPUT_DIR = os.path.join(BASE_DIR, "outputs")
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 
-# Inicializar cliente OpenAI
-client = OpenAI()
+# Variáveis Azure OpenAI
+AZURE_OPENAI_API_KEY = os.getenv("AZURE_OPENAI_API_KEY")
+AZURE_OPENAI_ENDPOINT = os.getenv("AZURE_OPENAI_ENDPOINT")
+AZURE_OPENAI_EMBEDDING_DEPLOYMENT = os.getenv("AZURE_OPENAI_EMBEDDING_DEPLOYMENT")
 
 
-EMBEDDING_MODEL = "text-embedding-3-small"
+# Inicializar cliente Azure OpenAI
+client = OpenAI(
+    api_key=AZURE_OPENAI_API_KEY,
+    base_url=f"{AZURE_OPENAI_ENDPOINT}openai/deployments/{AZURE_OPENAI_EMBEDDING_DEPLOYMENT}/"
+)
 
 
 def get_embedding(text: str) -> np.ndarray:
-    """
-    Gera embedding para um texto
-    """
 
     response = client.embeddings.create(
-        model=EMBEDDING_MODEL,
+        model=AZURE_OPENAI_EMBEDDING_DEPLOYMENT,
         input=text
     )
 
@@ -72,10 +79,8 @@ def build_vector_store():
 
     print(f"Total vectors indexed: {index.ntotal}")
 
-    # salvar index
     faiss.write_index(index, os.path.join(OUTPUT_DIR, "vector_index.faiss"))
 
-    # salvar metadata
     with open(os.path.join(OUTPUT_DIR, "metadata.pkl"), "wb") as f:
         pickle.dump(metadata, f)
 
